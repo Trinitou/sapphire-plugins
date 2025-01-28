@@ -25,6 +25,13 @@ namespace clap { namespace helpers {
       };
    }
 
+   template <MisbehaviourHandler h, CheckingLevel l>
+   template <typename T, typename ValidImpl>
+   const T &PluginEntry<h, l>::getInstance() noexcept {
+      assert(_instance && "make sure to call this only between plugin_entry.init and plugin_entry.deinit");
+      return *static_cast<const T*>(_instance.get());
+   }
+
    // This method is meant for implementing contract checking, it isn't part of CLAP.
    // The default implementation will be slow, so consider overriding it with a faster one.
    // Returns -1 if the plugin isn't found.

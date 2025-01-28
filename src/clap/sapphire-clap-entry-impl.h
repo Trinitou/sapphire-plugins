@@ -14,6 +14,9 @@
 
 #include "plugin-entry.hh" // <clap/helpers/plugin-entry.hh>
 
+struct clap_plugin_info_as_auv2;
+struct clap_plugin_factory_as_auv2;
+
 namespace sapphire_plugins
 {
 using Entry =
@@ -31,5 +34,12 @@ struct EntryImpl : Entry
     pluginFactoryGetPluginDescriptor(uint32_t w) const noexcept override;
     const clap_plugin *pluginFactoryCreatePlugin(const clap_host &host,
                                                  const char *plugin_id) const noexcept override;
+
+protected:
+    bool getAuv2Info(uint32_t index, clap_plugin_info_as_auv2 *info) const noexcept;
+
+private:
+    static bool clapGetAuv2Info(const clap_plugin_factory_as_auv2 *factory, uint32_t index,
+                                clap_plugin_info_as_auv2 *info) noexcept;
 };
 } // namespace sapphire_plugins

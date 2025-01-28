@@ -63,7 +63,7 @@ const clap_plugin_descriptor *sapphire_plugins::EntryImpl::pluginFactoryGetPlugi
 
 const clap_plugin *
 sapphire_plugins::EntryImpl::pluginFactoryCreatePlugin(const clap_host &host,
-                                      const char *plugin_id) const noexcept
+                                                       const char *plugin_id) const noexcept
 {
     if (strcmp(plugin_id, elastika::getDescriptor()->id) == 0)
     {
@@ -86,8 +86,7 @@ sapphire_plugins::EntryImpl::pluginFactoryCreatePlugin(const clap_host &host,
     return nullptr;
 }
 
-static bool clap_get_auv2_info(const clap_plugin_factory_as_auv2 *factory, uint32_t index,
-                               clap_plugin_info_as_auv2_t *info)
+bool sapphire_plugins::EntryImpl::getAuv2Info(uint32_t index, clap_plugin_info_as_auv2_t *info) const noexcept
 {
     if (index == 0)
     {
@@ -124,6 +123,19 @@ static bool clap_get_auv2_info(const clap_plugin_factory_as_auv2 *factory, uint3
     return false;
 }
 
+bool sapphire_plugins::EntryImpl::clapGetAuv2Info(const clap_plugin_factory_as_auv2 *factory,
+                                                  uint32_t index,
+                                                  clap_plugin_info_as_auv2 *info) noexcept
+{
+    auto &self = getInstance<EntryImpl>();
+    if (index >= self.pluginFactoryGetPluginCount())
+    {
+        // TODO misbehaviour handling
+        return false;
+    }
+    return self.getAuv2Info(index, info);
+}
+
 static const clap_plugin_info_as_vst3 *clap_get_vst3_info(const clap_plugin_factory_as_vst3 *f,
                                                           uint32_t index)
 {
@@ -135,11 +147,12 @@ const void *sapphire_plugins::EntryImpl::getFactory(const char *factory_id) cons
     SPLLOG("Asking for factory [" << factory_id << "]");
     if (strcmp(factory_id, CLAP_PLUGIN_FACTORY_INFO_AUV2) == 0)
     {
-        static const struct clap_plugin_factory_as_auv2 six_sines_auv2_factory = {
+        static const struct clap_plugin_factory_as_auv2 auv2Factory = {
             "SPhR",    // manu
             "Saphire", // manu name
-            clap_get_auv2_info};
-        return &six_sines_auv2_factory;
+            clapGetAuv2Info
+        };
+        return &auv2Factory;
     }
     if (strcmp(factory_id, CLAP_PLUGIN_FACTORY_INFO_VST3) == 0)
     {
