@@ -23,7 +23,7 @@
 #include <cstring>
 #include <string.h>
 #include <clap/clap.h>
-#include <clap/helpers/plugin-entry.hxx>
+#include "plugin-entry.hxx" // <clap/helpers/plugin-entry.hxx>
 
 #include "elastika/elastika.h"
 #include "tube_unit/tube_unit.h"

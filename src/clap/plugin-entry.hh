@@ -7,8 +7,8 @@
 #include <string>
 #include <type_traits>
 
-#include <clap/helpers/checking-level.hh>
-#include <clap/helpers/misbehaviour-handler.hh>
+#include "../../libs/clap-libs/clap-helpers/include/clap/helpers/checking-level.hh"
+#include "../../libs/clap-libs/clap-helpers/include/clap/helpers/misbehaviour-handler.hh"
 
 namespace clap { namespace helpers {
 
