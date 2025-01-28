@@ -23,12 +23,7 @@ extern "C"
 #endif
 
     // clang-format off
-    const CLAP_EXPORT struct clap_plugin_entry clap_entry = {
-        CLAP_VERSION,
-        sapphire_plugins::clap_init,
-        sapphire_plugins::clap_deinit,
-        sapphire_plugins::get_factory
-    };
+    const CLAP_EXPORT struct clap_plugin_entry clap_entry = sapphire_plugins::Entry::clapPluginEntry<sapphire_plugins::EntryImpl>();
     // clang-format on
 #ifdef __GNUC__
 #pragma GCC diagnostic pop

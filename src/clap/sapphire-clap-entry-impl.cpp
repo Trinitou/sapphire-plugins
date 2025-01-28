@@ -23,17 +23,20 @@
 #include <cstring>
 #include <string.h>
 #include <clap/clap.h>
+#include <clap/helpers/plugin-entry.hxx>
 
 #include "elastika/elastika.h"
 #include "tube_unit/tube_unit.h"
 #include "gravy/gravy.h"
 #include "galaxy/galaxy.h"
 
+template const clap_plugin_entry sapphire_plugins::Entry::clapPluginEntry<sapphire_plugins::EntryImpl>() noexcept;
+
 namespace sapphire_plugins
 {
 
-uint32_t clap_get_plugin_count(const clap_plugin_factory *) { return 4; };
-const clap_plugin_descriptor *clap_get_plugin_descriptor(const clap_plugin_factory *f, uint32_t w)
+uint32_t sapphire_plugins::EntryImpl::pluginFactoryGetPluginCount() const noexcept { return 4; };
+const clap_plugin_descriptor *sapphire_plugins::EntryImpl::pluginFactoryGetPluginDescriptor(uint32_t w) const noexcept
 {
     if (w == 0)
     {
@@ -58,26 +61,27 @@ const clap_plugin_descriptor *clap_get_plugin_descriptor(const clap_plugin_facto
     return nullptr;
 }
 
-const clap_plugin *clap_create_plugin(const clap_plugin_factory *f, const clap_host *host,
-                                      const char *plugin_id)
+const clap_plugin *
+sapphire_plugins::EntryImpl::pluginFactoryCreatePlugin(const clap_host &host,
+                                      const char *plugin_id) const noexcept
 {
     if (strcmp(plugin_id, elastika::getDescriptor()->id) == 0)
     {
-        return elastika::makePlugin(host);
+        return elastika::makePlugin(&host);
     }
     if (strcmp(plugin_id, tube_unit::getDescriptor()->id) == 0)
     {
-        return tube_unit::makePlugin(host);
+        return tube_unit::makePlugin(&host);
     }
 
     if (strcmp(plugin_id, gravy::getDescriptor()->id) == 0)
     {
-        return gravy::makePlugin(host);
+        return gravy::makePlugin(&host);
     }
 
     if (strcmp(plugin_id, galaxy::getDescriptor()->id) == 0)
     {
-        return galaxy::makePlugin(host);
+        return galaxy::makePlugin(&host);
     }
     return nullptr;
 }
@@ -126,18 +130,9 @@ static const clap_plugin_info_as_vst3 *clap_get_vst3_info(const clap_plugin_fact
     return nullptr;
 }
 
-const void *get_factory(const char *factory_id)
+const void *sapphire_plugins::EntryImpl::getFactory(const char *factory_id) const noexcept
 {
     SPLLOG("Asking for factory [" << factory_id << "]");
-    if (strcmp(factory_id, CLAP_PLUGIN_FACTORY_ID) == 0)
-    {
-        static const struct clap_plugin_factory six_sines_clap_factory = {
-            clap_get_plugin_count,
-            clap_get_plugin_descriptor,
-            clap_create_plugin,
-        };
-        return &six_sines_clap_factory;
-    }
     if (strcmp(factory_id, CLAP_PLUGIN_FACTORY_INFO_AUV2) == 0)
     {
         static const struct clap_plugin_factory_as_auv2 six_sines_auv2_factory = {
@@ -155,11 +150,10 @@ const void *get_factory(const char *factory_id)
     }
     return nullptr;
 }
-bool clap_init(const char *p)
-{
+
+bool sapphire_plugins::EntryImpl::init(const char *p) noexcept {
     // sst::plugininfra::misc_platform::allocateConsole();
     SPLLOG("Initializing Sapphire");
     return true;
 }
-void clap_deinit() {}
 } // namespace sapphire_plugins

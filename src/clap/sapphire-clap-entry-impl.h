@@ -12,9 +12,24 @@
  * The source code and license are at https://github.com/baconpaul/sapphire-plugins
  */
 
+#include "plugin-entry.hh" // <clap/helpers/plugin-entry.hh>
+
 namespace sapphire_plugins
 {
-const void *get_factory(const char *factory_id);
-bool clap_init(const char *p);
-void clap_deinit();
+using Entry =
+    clap::helpers::PluginEntry<clap::helpers::MisbehaviourHandler::Terminate,
+                               clap::helpers::CheckingLevel::Maximal>; // those hard requirements
+                                                                       // have to be checked with
+                                                                       // different hosts
+struct EntryImpl : Entry
+{
+    const void *getFactory(const char *factory_id) const noexcept override;
+    bool init(const char *p) noexcept override;
+    bool implementsPluginFactory() const noexcept override { return true; }
+    uint32_t pluginFactoryGetPluginCount() const noexcept override;
+    const clap_plugin_descriptor *
+    pluginFactoryGetPluginDescriptor(uint32_t w) const noexcept override;
+    const clap_plugin *pluginFactoryCreatePlugin(const clap_host &host,
+                                                 const char *plugin_id) const noexcept override;
+};
 } // namespace sapphire_plugins
